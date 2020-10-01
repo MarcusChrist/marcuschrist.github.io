@@ -1,160 +1,112 @@
-import { Button, TextField } from "@material-ui/core";
-import React, { useState } from "react";
-import { Search, searchInit } from "../../models/search";
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import { DatePickerField } from "../shared/datepicker";
+import React, { useState } from 'react';
+// Material UI
+import MUIDataTable, { MUIDataTableOptions, Display } from "mui-datatables";
+import CheckIcon from '@material-ui/icons/Check';
+import DeleteIcon from '@material-ui/icons/Delete';
+import RefreshIcon from '@material-ui/icons/Refresh';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+// Views
+import { Form } from "./dashboardForm";
+// Model
+//import { Setup } from "../../models/setup";
+
 
 interface InterFaceProps {
-    foundCountries: any;
-    doSearch: any;
-    foundOrigin: any;
-    findAirport: any;
-    foundDestination: any;
-  }
-  
-  const Dashboard = (props: InterFaceProps) => {
+    data: any;
+    // user?: any;
+    // deleteSetups: any;
+    // addSetup: any;
+    //codes?: [Setup]
+
+}
+const Dashboard = (props: InterFaceProps) => {
     const {
-      foundCountries,
-      doSearch,
-      foundOrigin,
-      findAirport,
-      foundDestination,
+        data
+        // user,
+        //codes,
+        // deleteSetups,
+        // addSetup
     }: InterFaceProps = props;
 
-    const [searchParms, setSearchParm] = useState<Search>(searchInit);
-    
-    const handleSearch = () => {    
-        doSearch(searchParms);
+    // States
+    const [isOpen, setOpen] = useState(false);
+
+    // Functions
+    const deleteRows = (rows: any) => {
+       // deleteSetups(rows);
+    }
+
+    const handleClose = () => {
+        setOpen(false)
     };
 
-      const handleAirport = (name: any) => (event: React.ChangeEvent<{}>, newValue: any) => {
-        if (newValue === null) { return };
-        setSearchParm({ ...searchParms, [name]: newValue });
-      };
+    //const data: any = codes
 
-      const handleCountry = (event: React.ChangeEvent<{}>, newValue: any) => {
-        if (newValue === null) { return };
 
-        setSearchParm({ ...searchParms, country: newValue });
-      };
+    const columns = [
+        "typeCode",
+        "typeDesc",
+        "crtUser",
+        "crtTime",
+        "chgUser",
+        "chgTime"
+    ];
 
-      const handleOrigin = (event: React.ChangeEvent<{}>, newValue: any) => {
-        if (newValue === null) { return };
 
-        setSearchParm({ ...searchParms, origin: newValue });
-        findAirport(newValue, "origin");
-      };
+    const options: MUIDataTableOptions = {
+        //responsive: "stacked",
+        filterType: 'checkbox',
+        onRowClick: (rowData, rowMeta) => {
+            const mergedArray = rowData.reduce((result: any, field, index) => {
+                result[columns[index]] = field;
+                return result;
+            }, {})
+            setOpen(true);
 
-      const handleDestination = (event: React.ChangeEvent<{}>, newValue: any) => {
-        if (newValue === null) { return };
+        },
+        customToolbarSelect: (selectedRows) => (
+            <div>
+                <Tooltip title="Delete">
+                    <IconButton
+                        onClick={() => {
+                            deleteRows(selectedRows);
+                        }}
 
-        setSearchParm({ ...searchParms, destination: newValue });
-        findAirport(newValue, "destination");
-      };
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+            </div>
+        ),
+        customToolbar: () => {
+            return (
+                <span>
+                    <Form/>
+                    <Tooltip title="Reload">
+                        <IconButton
+                        // onClick={() => {
+                        //     refreshView();
+                        // }}
 
-      const handleDateChange = (name: any) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchParm({ ...searchParms, [name]: event });
-      };
+                        >
+                            <RefreshIcon />
+                        </IconButton>
+                    </Tooltip>
+                </span>
+            )
+        }
+    };
 
     return (
-      <div>
-      {foundCountries.Code !== "AD" ?
-      <Autocomplete
-        //multiple
-        key={"autocomplete-country"}
-        id={"autocomplete-country"}
-        options={foundCountries}
-        style={{ width: 335, height: 40, marginBottom: "10px", marginLeft: "10px" }}
-        getOptionLabel={(option: any) => option.Name}
-        renderInput={params => <TextField {...params} label="Your Country" />}
-        onChange={handleCountry}
-        freeSolo={true}
-        openOnFocus={true}
-      /> : "NO INTERNET CONNECTION"}
-      <Autocomplete
-        key={"autocomplete-origincountry"}
-        id={"autocomplete-origincountry"}
-        options={foundCountries}
-        style={{ width: 335, height: 40, marginBottom: "10px", marginLeft: "10px" }}
-        getOptionLabel={(option: any) => option.Name}
-        renderInput={params => <TextField {...params} label="From Country" />}
-        onChange={handleOrigin}
-        freeSolo={true}
-        openOnFocus={true}
-      />
-      <Autocomplete
-        //multiple
-        key={"autocomplete-originairport"}
-        id={"autocomplete-originairport"}
-        options={foundOrigin}
-        style={{ width: 335, height: 40, marginBottom: "10px", marginLeft: "10px" }}
-        getOptionLabel={(option: any) => option.PlaceName + ": " + option.PlaceId.replace("-sky","")}
-        renderInput={params => <TextField {...params} label="From Airport" />}
-        onChange={handleAirport("originAirport")}
-        freeSolo={true}
-        openOnFocus={true}
-      />
-      <div></div>
-      <div></div>
-      {foundCountries.Code !== "AD" ?
-      <Autocomplete
-        //multiple
-        key={"autocomplete-destinationcountry"}
-        id={"autocomplete-destinationcountry"}
-        options={foundCountries}
-        style={{ width: 335, height: 40, marginBottom: "10px", marginLeft: "10px" }}
-        getOptionLabel={(option: any) => option.Name}
-        renderInput={params => <TextField {...params} label="To Country" />}
-        onChange={handleDestination}
-        freeSolo={true}
-        openOnFocus={true}
-      /> : "NO INTERNET CONNECTION"}
-      <Autocomplete
-        //multiple
-        key={"autocomplete-destinationairport"}
-        id={"autocomplete-destinationairport"}
-        options={foundDestination}
-        style={{ width: 335, height: 40, marginBottom: "10px", marginLeft: "10px" }}
-        getOptionLabel={(option: any) => option.PlaceName + ": " + option.PlaceId.replace("-sky","")}
-        renderInput={params => <TextField {...params} label="To Airport" />}
-        onChange={handleAirport("destinationAirport")}
-        freeSolo={true}
-        openOnFocus={true}
-      />
-          <DatePickerField
-            key={"outboundDate"}
-            label={"Outbound Date"}
-            width={160}
-            onChange={handleDateChange("outboundDate")}
-            value={searchParms.outboundDate}
-            marginLeft={"8px"}
-            marginRight={"8px"}
-          />
-          <DatePickerField
-            key={"returnDate"}
-            label={"Return Date"}
-            width={160}
-            onChange={handleDateChange("returnDate")}
-            value={searchParms.returnDate}
-            marginLeft={"8px"}
-            marginRight={"8px"}
-          />
-            <Button
-              key={"searchButton"}
-              variant="contained"
-              color="primary"
-              disabled={searchParms.destinationAirport === "" || searchParms.originAirport === "" ||
-                searchParms.outboundDate === new Date("0001-01-01") || searchParms.returnDate === new Date("0001-01-01")
-                  ? true : false}
-              style={{ width: 120, height: 35, display: "block", marginTop: "32px", marginLeft: "32%" }}
-              // disabled={progress === 100 || progress === 0 ? false : true}2+
-              //endIcon={<SearchIcon />}
-              onClick={handleSearch} 
-              >
-              Search
-            </Button>
+        <div><MUIDataTable
+            title={"Prices"}
+            data={data}
+            columns={columns}
+            options={options}
+        />
         </div>
-    );
-};
+    )
+}
 
 export const DashboardView = Dashboard;

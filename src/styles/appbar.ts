@@ -86,16 +86,16 @@ export const useStyles = makeStyles((theme: Theme) =>
             color: theme.palette.primary.main.toString(),
         },
         content: {
-            flexGrow: 1,
-            padding: theme.spacing(1),
+            //flexGrow: 1,
+            //padding: theme.spacing(1),
         },
         appBarSpacer: {
             minHeight: 64
         },
         container: {
             paddingTop: theme.spacing(6),
-            paddingBottom: theme.spacing(1),
-            paddingLeft: theme.spacing(30),
+            //paddingBottom: theme.spacing(1),
+            paddingLeft: theme.spacing(45),
         },
         nested: {
             paddingLeft: theme.spacing(4),

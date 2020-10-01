@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import './App.css';
-import DashboardView from './views/dashboard';
 import { SnackbarProvider } from "notistack";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { darkTheme, lightTheme } from './styles';
-import { CssBaseline, AppBar, Toolbar, Chip, Avatar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button, Container, Grid, Switch } from '@material-ui/core';
+import { CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button, Container, Grid } from '@material-ui/core';
 import { useStyles } from './styles/appbar';
 import clsx from "clsx";
-import { Route } from 'react-router-dom';
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import useWindowDimensions from './styles/dimensions';
-import Dashboard from "./views/dashboard";
+import Dashboard from "./views/appbar";
+import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
+import Brightness4Icon from "@material-ui/icons/Brightness4";
+import Dashboard2 from "./views/dashboard";
 
 function App() {
   const classes = useStyles();
@@ -94,7 +93,7 @@ function App() {
       {/* <Divider /> */}
       <List disablePadding>
         {open ? 
-        <Dashboard></Dashboard>
+        <Dashboard />
         : ""}
         {/* <ListItem button>
           <ListItemIcon>
@@ -114,7 +113,7 @@ function App() {
         </ListItem>
       </List> */}
       {/* <Divider /> */}
-      {/* <List className={classes.drawerBottomList} disablePadding>
+      <List className={classes.drawerBottomList} disablePadding>
         <Divider />
         <ListItem button onClick={toggleTheme}>
           <ListItemIcon>
@@ -183,15 +182,16 @@ function App() {
           </ListItemIcon>
           <ListItemText primary="Collapse Search Options" />
         </ListItem>
-      </List> */}
+      </List>
     </Drawer>
-    <main className={classes.content}>
+    {/* <main className={classes.content}> */}
       {/* <div className={classes.appBarSpacer} /> */}
       <Container maxWidth="xl" className={classes.container}>
-        <Grid container>
+        <Grid>
+          <Dashboard2 />
         </Grid>
       </Container>
-    </main>
+    {/* </main> */}
       </SnackbarProvider>
     </MuiThemeProvider>
   </div>
