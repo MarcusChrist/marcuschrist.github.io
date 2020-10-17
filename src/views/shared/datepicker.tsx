@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -14,7 +14,6 @@ interface InterFaceProps {
     marginRight: string;
     value: any;
 }
-
 export function DatePickerField(props: InterFaceProps) {
     const {
         label,
@@ -25,32 +24,11 @@ export function DatePickerField(props: InterFaceProps) {
         value
     }: InterFaceProps = props;
     const classes = styles(props);
-    // The first commit of Material-UI
-    const [selectedDate, setSelectedDate] = 
-    React.useState<Date | null>(
-        null,
-    );
-    // const handleDateChange = (date: any) => {
-    //   setSelectedDate(date);
-    // };
-    // const [focused, setFocused] = useState(false);
-    //Validate date
-    // var validatedValue = value;
-    // try {
-    //     if (value.getFullYear() === 1)
-    //         validatedValue = null;
-    // }
-    // catch { 
-    //     if (value === "0001-01-01T00:00:00.000Z")
-    //         validatedValue = null;
-    // }
-    // if (label === ("Created From") || label === ("Created To")) {
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
                 disableToolbar
-                //disableFuture
-                //disablePast
+                disablePast
                 variant="inline"
                 format="yyyy-MM-dd"
                 margin="normal"
@@ -64,23 +42,9 @@ export function DatePickerField(props: InterFaceProps) {
                         marginLeft: marginLeft,
                         marginRight: marginRight,}}
                 className={classes.textField}
-                //value={validatedValue}
-                //onChange={handleDateChange}
-                value={selectedDate}
-                // InputLabelProps={{
-                //     shrink: !isNull(selectedDate) || !isNull(validatedValue),
-                //     hidden: true }}
-                onChange={val => {
-                    setSelectedDate(val);
-                 //   if (focused && val?.toString() !== "Invalid Date") {
-                        setSelectedDate(val);
-                        onChange(val);}}
-                     //   setFocused(false);}}}
-                // KeyboardButtonProps={{'aria-label': 'change date'}}
-                    autoOk
-                // onClose={ () => {onChange(selectedDate)}}
-                // onFocus={ () => {setFocused(true)}}
-                // ampm={false}
+                value={value}
+                onChange={val => {onChange(val);}}
+                autoOk
             />
         </MuiPickersUtilsProvider>
     );

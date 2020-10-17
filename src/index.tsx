@@ -7,7 +7,7 @@ import { HashRouter } from 'react-router-dom';
 import store from "./store";
 import App from './App';
 
-
+require('dotenv').config();
 ReactDOM.render(
   <Provider store={store}>
     <HashRouter>

@@ -1,34 +1,44 @@
-import { getCountries, getSky, getAirport } from "../../api/getInfo";
-import { Search, initAirport } from "../../models/search";
+import { getCountries, getSky, getAirport, getIP, flightAmadeus, authAmadeus } from "../../api/getInfo";
+import { Search, initAirport, countries } from "../../models/search";
 import { DashboardView } from "./dashboard";
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
 import { useSnackbar } from "notistack";
+import { mapAmadeus } from "../../reducers/mapping";
 
 
 const Dashboard = (props: any) => {
     const {
+      setPrices,
+      setAmadeus,
+      setProgress,
+      setSearchParms
     }: any = props
 
 //const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-const [foundCountries, setFoundCountries] = useState("");
+const [foundCountries, setFoundCountries] = useState(countries);
 const [foundOrigin, setFoundOrigin] = useState(initAirport);
 const [foundDestination, setFoundDestination] = useState(initAirport);
+const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+const [myInfo, setMyInfo] = useState({IP: "", Code: "", Airport: ""});
 
 useEffect(() => {
   refresh();
 }, []);
-const refresh = () => {
+
+const refresh = async () => {
   getCountries().then((response) => {
       return response.json();
   }).then((data) => {
       setFoundCountries(data.Countries);
-      //enqueueSnackbar("Login success", { variant: "info" });
   }).catch((error) => {
       console.error('There has been a problem with your fetch operation:', error);
-      //enqueueSnackbar("Error", { variant: "error" });
+      enqueueSnackbar("Error", { variant: "error" });
   });
+  const ip = await getIP();
+  const ipAddress = {IP: ip[2].substring(3), Code: ip[8].substring(4), Airport: ip[6].substring(5) + "-sky"};
+  setMyInfo(ipAddress);
 };  
 
 const findAirport = (value: any, source: string) => {
@@ -40,10 +50,9 @@ const findAirport = (value: any, source: string) => {
     } else if (source === "destination") {
       setFoundDestination(data.Places);
     }
-      //enqueueSnackbar("Login success", { variant: "info" });
   }).catch((error) => {
       console.error('There has been a problem with your fetch operation:', error);
-      //enqueueSnackbar("Error", { variant: "error" });
+      enqueueSnackbar("Error", { variant: "error" });
   });
 };  
 
@@ -52,15 +61,81 @@ const doSearch = (searchParms: Search) => {
     if (!response.ok) { throw new Error('Network response was not ok'); };
       return response.json();
   }).then((data) => {
-    console.log(data.Routes.Quotes);
-    //setTest(data.Countries);
-    //enqueueSnackbar("Search success", { variant: "success" });
+    console.log(data);
+    setPrices(data);
   })
   .catch((error) => {
     console.error('There has been a problem with your fetch operation:', error);
-    //enqueueSnackbar(error + ".", { variant: "error" });
+    enqueueSnackbar(error + ".", { variant: "error" });
   });
 };
+
+
+const doAmadeus = (searchParms: Search) => {
+  if (searchParms.passengers.adult === 0 && searchParms.passengers.child === 0) {
+    alert("Please enter atleast one passenger!");
+    return;
+  }
+  console.log(searchParms);
+  setSearchParms(searchParms);
+  setProgress(1);
+    
+  const auth = JSON.parse(localStorage.getItem("Auth") || "");
+  var key: string;
+  if ((new Date().getTime() / 1000) > auth["expires_in"]) {
+    if (process.env["REACT_APP_API_URL"] && process.env["REACT_APP_API_KEY"] && process.env["REACT_APP_API_SECRET"]) {
+      authAmadeus(process.env["REACT_APP_API_URL"], process.env["REACT_APP_API_KEY"], process.env["REACT_APP_API_SECRET"]).
+        then((response) => {
+          if (!response.ok) { 
+              console.log(response);
+              throw new Error('Network response was not ok');
+          };
+          return response.json();
+      }).then((data) => {
+        data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
+        localStorage.setItem("Auth", JSON.stringify(data));
+        key = data["access_token"];
+        const body = mapAmadeus(searchParms);
+        setTimeout(() => { 
+          flightAmadeus(key, body).then((response) => {
+            if (!response.ok) { 
+                console.log(response);
+                throw new Error('Network response was not ok');
+            };
+          }).then((data) => {
+            setAmadeus(data);
+            setProgress(100);
+          }).catch((error) => {
+              setProgress(-1);
+              console.error('There has been a problem with your fetch operation:', error);
+              enqueueSnackbar("Error", { variant: "error" });
+          }); 
+        }, 1000);
+      }).catch((error) => {
+        setProgress(-1);
+        console.error('There has been a problem with your fetch operation:', error);
+        enqueueSnackbar("Error", { variant: "error" });
+      });
+    };
+  } else {
+    key = auth["access_token"];
+    const body = mapAmadeus(searchParms);
+    flightAmadeus(key, body).then((response) => {
+      if (!response.ok) { 
+          throw new Error('Network response was not ok');
+      };
+      return response.json();
+    }).then((data) => {
+      setAmadeus(data);
+      setProgress(100);
+    }).catch((error) => {
+        setProgress(-1);
+        console.error('There has been a problem with your fetch operation:', error);
+        enqueueSnackbar("Error", { variant: "error" });
+    }); 
+  };
+};
+
 return (
     <div> 
       <DashboardView
@@ -69,17 +144,24 @@ return (
         foundOrigin={foundOrigin}
         findAirport={findAirport}
         foundDestination={foundDestination}
+        myInfo={myInfo}
+        doAmadeus={doAmadeus}
+        amadeusSearch={props.children}
       />
     </div>
   )
 };
 
 const mapStateToProps = (state: any) => ({
-  countries: state.countries
+  prices: state.messageState.prices,
+  amadeus: state.messageState.amadeus,
 });
 
 const mapDispatchToProps = (dispatch: any) => ({
-  setCountries: (countries: any) => dispatch({ type: "COUNTRIES_SET", countries }),
+  setPrices: (prices: any) => dispatch({ type: "PRICES_SET", prices }),
+  setAmadeus: (amadeus: any) => dispatch({ type: "AMADEUS_SET", amadeus }),
+  setProgress: (progress: any) => dispatch({ type: "PROGRESS_SET", progress}),
+  setSearchParms: (searchParms: any) => dispatch({ type: "SEARCHPARMS_SET", searchParms}),
 });
 
 

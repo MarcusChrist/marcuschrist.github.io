@@ -1,13 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from "react-redux";
 import { compose } from "recompose";
 import { makeStyles } from "@material-ui/core/styles";
-// Models
-//import { Setup } from "../../models/setup";
-// API
-//import { fetchTextCodes, deleteTextCode, updateTextCode, addTextCode } from "../../api/maintenace";
-// Views
-import { DashboardView } from "./dashboard";
+import { DashboardView } from './dashboard';
+import { mapPrices } from '../../reducers/mapping';
+import { createSession } from '../../api/getInfo';
 
 const styles = makeStyles({
     root: {
@@ -17,77 +14,44 @@ const styles = makeStyles({
 
 const Dashboard2 = (props: any) => {
     const {
-        user,
-        onSetCodes,
-        onDeleteCode,
-        onAddCode,
-        onUpdateCode,
-        codes
+        prices,
+        progress
     }: any = props
 
-    // Similar to componentDidMount/WillMount
-    // useEffect(() => {
-    //     fetchTextCodes().then((response) => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
+    //const [progress, setProgress] = React.useState(0);
+    const classes = styles(props);
+    var fixedPrices: any = [];
+    var fixedCurrency;
+
+    // const startSession = () => {
+    //     createSession().then((response) => {
+    //       if (!response.ok) { throw new Error('Network response was not ok'); };
+    //         console.log(response);
     //         return response.json();
     //     }).then((data) => {
-    //         const setupTypes = data.resultSetRows.map((setup: Setup) => new Setup(setup));
-    //         onSetCodes(setupTypes);
+    //       console.log(data);
     //     })
-    //         .catch((error) => {
-    //             console.error('There has been a problem with your fetch operation:', error);
-    //         });
-    // }, [])
-    const classes = styles(props);
-    var data;
+    //     .catch((error) => {
+    //       console.error('There has been a problem with your fetch operation:', error);
+    //       //enqueueSnackbar(error + ".", { variant: "error" });
+    //     });
+    // };   
+    if (prices.Quotes) {
+        fixedPrices = mapPrices(prices);
+        fixedCurrency = prices.Currencies[0].Code;
+    };
 
-    // Functions
-    // const addRow = (setup: Setup) => {
-    //     const requestObj = {
-    //         request: {
-    //             typeCode: setup.typeCode,
-    //             typeDesc: setup.typeDesc,
-    //             crtUser: setup.crtUser,
-    //             chgUser: ""
-    //         }
-    //     }
-    //     addTextCode(requestObj).then((response) => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         onAddCode(setup);
-    //     })
-    //         .catch((error) => {
-    //             console.error('There has been a problem with your fetch operation:', error);
-    //         });
-    // }
-    // const deleteRows = (rows: any) => {
-    //     for (let index = 0; index < rows.data.length; index++) {
-    //         let key = codes[rows.data[index].dataIndex];
-    //         deleteTextCode(key.typeCode).then((response) => {
-    //             if (!response.ok) {
-    //                 throw new Error('Network response was not ok');
-    //             }
-    //             onDeleteCode(key);
-    //         }).catch((error) => {
-    //             console.error('There has been a problem with your fetch operation:', error);
-    //         });
-    //     }
-
-    // }
-
+    const currency = fixedCurrency;
+    const data = fixedPrices;
 
     return (
         <div className={classes.root}>
 
             <DashboardView
                 data={data}
-                //user={user}
-                //codes={codes}
-                //deleteSetups={deleteRows}
-                //addSetup={addRow}
+                currency={currency}
+                progress={progress}
+                //startSession={startSession}
             />
         </div>
     )
@@ -95,11 +59,12 @@ const Dashboard2 = (props: any) => {
 
 
 const mapStateToProps = (state: any) => ({
-    countries: state.countries
+    prices: state.messageState.prices,
+    progress: state.messageState.progress
   });
   
   const mapDispatchToProps = (dispatch: any) => ({
-    setCountries: (countries: any) => dispatch({ type: "COUNTRIES_SET", countries }),
+    //getCountries: (countries: any) => dispatch({ type: "COUNTRIES_SET", countries }),
   });
   
   

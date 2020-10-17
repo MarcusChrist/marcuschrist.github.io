@@ -1,15 +1,19 @@
 import { makeStyles, createMuiTheme, Theme } from "@material-ui/core/styles";
+import smallTravel from "../smallTravel.png"
 
-const _fontSize = 14;
+const _fontSize = 11;
 const _fontWeight = 100;
 export const darkTheme = createMuiTheme({
     palette: {
-        type: "dark",
-        primary: {
-            main: "#ffcc80",
+        background: {
+            paper: "rgba(5, 12, 5, 0.6)",
         },
+        type: "dark",
+        // primary: {
+        //     main: "#ffcc80",
+        // },
         secondary: {
-            main: "#9fa8da"
+            main: "#ff0000"
         }
     },
     typography: {
@@ -32,22 +36,24 @@ export const darkTheme = createMuiTheme({
         // @ts-ignore
       MUIDataTableBodyCell: {
         root: {
-            fontSize:"11px",
             paddingTop:"0",
             paddingBottom:"0",
             paddingRight: "0",
-        }
+        },
+      }, 
+      MUIDataTable: {
+        paper: {
+          backgroundColor: "rgba(0, 0, 0, 0.20)",
+        },
       },
-    //   MUIDataTableHeadCell: {
-    //     toolButton: {
-    //       justifyContent: 'center'
-    //     },
-    //   },
     }
 });
 export const lightTheme = createMuiTheme({
     palette: {
-        type: "light"
+        type: "light",
+        background: {
+            paper: "rgba(255, 225, 255, 0.65)",
+        },
     },
     typography: {
         fontSize: _fontSize,
@@ -73,13 +79,14 @@ export const lightTheme = createMuiTheme({
             paddingBottom:"0",
             paddingRight: "0",
             paddingLeft: "1",
+            //bold: "true"
         }
       },
-    //   MUIDataTableHeadCell: {
-    //     toolButton: {
-    //       justifyContent: 'center'
-    //     },
-    //   },
+      MUIDataTable: {
+        paper: {
+          backgroundColor: "rgba(155, 12, 255, 0.15)",
+        },
+      },
     }
 });
 

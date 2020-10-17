@@ -1,112 +1,75 @@
 import React, { useState } from 'react';
-// Material UI
 import MUIDataTable, { MUIDataTableOptions, Display } from "mui-datatables";
-import CheckIcon from '@material-ui/icons/Check';
-import DeleteIcon from '@material-ui/icons/Delete';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-// Views
-import { Form } from "./dashboardForm";
-// Model
-//import { Setup } from "../../models/setup";
-
+import { columnsPrices, Search } from '../../models/search';
+import classes from '*.module.css';
+import { useStyles } from "../../styles/appbar";
+import { crawler } from '../../api/getInfo';
+import { LinearProgress } from '@material-ui/core';
 
 interface InterFaceProps {
-    data: any;
-    // user?: any;
-    // deleteSetups: any;
-    // addSetup: any;
-    //codes?: [Setup]
-
+    data?: any;
+    currency?: any;
+    progress: number;
+    //startSession: any;
 }
 const Dashboard = (props: InterFaceProps) => {
     const {
-        data
-        // user,
-        //codes,
-        // deleteSetups,
-        // addSetup
+        data,
+        currency,
+        progress,
+        //startSession
     }: InterFaceProps = props;
 
     // States
     const [isOpen, setOpen] = useState(false);
-
-    // Functions
-    const deleteRows = (rows: any) => {
-       // deleteSetups(rows);
-    }
+    const [setupItem, setSetupItem] = useState<Search>();
+    const classes = useStyles();
 
     const handleClose = () => {
         setOpen(false)
     };
-
-    //const data: any = codes
-
-
-    const columns = [
-        "typeCode",
-        "typeDesc",
-        "crtUser",
-        "crtTime",
-        "chgUser",
-        "chgTime"
-    ];
-
+    const columns: any = {};
 
     const options: MUIDataTableOptions = {
-        //responsive: "stacked",
-        filterType: 'checkbox',
+        rowsPerPage: 1000,
+        selectableRows: 'none',
+        tableBodyMaxHeight: "500px",
+        pagination: false,
+        search: false,
+        download: false,
+        print: false,
+        viewColumns: false,
+        filter: false,
+        
+        
+        
+
         onRowClick: (rowData, rowMeta) => {
-            const mergedArray = rowData.reduce((result: any, field, index) => {
-                result[columns[index]] = field;
-                return result;
-            }, {})
-            setOpen(true);
-
+            //console.log(rowData);
+            //console.log(rowMeta);
+            //setSetupItem(data[rowMeta.dataIndex]);
+            //console.log(setupItem);
+            //setOpen(true);
+            //startSession();
         },
-        customToolbarSelect: (selectedRows) => (
-            <div>
-                <Tooltip title="Delete">
-                    <IconButton
-                        onClick={() => {
-                            deleteRows(selectedRows);
-                        }}
-
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            </div>
-        ),
-        customToolbar: () => {
-            return (
-                <span>
-                    <Form/>
-                    <Tooltip title="Reload">
-                        <IconButton
-                        // onClick={() => {
-                        //     refreshView();
-                        // }}
-
-                        >
-                            <RefreshIcon />
-                        </IconButton>
-                    </Tooltip>
-                </span>
-            )
-        }
     };
-
+    
     return (
-        <div><MUIDataTable
-            title={"Prices"}
-            data={data}
-            columns={columns}
-            options={options}
-        />
+        // <div>
+        //     <iframe width={"500px"} height={"500px"}
+        //         src="https://widgets.skyscanner.net/widget-server/widgets/iframe?skyscannerWidget=MultiVerticalWidget&locale=en-GB&market=GB&currency=GBP&originGeoLookup=true"
+        //     ></iframe>
+        // </div>
+            <div className={classes.dialog}>
+            <MUIDataTable
+                title={data.length + " Flights found from SkyScanner."}
+                data={data ? data : ""}
+                columns={columnsPrices ? columnsPrices : columns}
+                options={options}
+            />        
         </div>
-    )
-}
+    );
+};
 
 export const DashboardView = Dashboard;
+

@@ -3,7 +3,7 @@ import './App.css';
 import { SnackbarProvider } from "notistack";
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { darkTheme, lightTheme } from './styles';
-import { CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button, Container, Grid } from '@material-ui/core';
+import { CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, List, ListItem, ListItemIcon, ListItemText, Button, Container } from '@material-ui/core';
 import { useStyles } from './styles/appbar';
 import clsx from "clsx";
 import useWindowDimensions from './styles/dimensions';
@@ -11,11 +11,14 @@ import Dashboard from "./views/appbar";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Dashboard2 from "./views/dashboard";
+import Dashboard3 from "./views/amadeusDashboard";
+import SwitchAPI from './views/shared/switchAPI';
 
 function App() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [lightMode, setLightMode] = useState(true);
+  const [amadeus, setAmadeus] = useState(true);
 
   const toggleTheme = () => {
     if (lightMode)
@@ -23,10 +26,11 @@ function App() {
     else
       setLightMode(true);
   }
-  
+
   const decreaseZoom = () => {
-    //ipcRenderer.send('decreaseZoom');
+    //ipcRenderer.send('increaseZoom');
   };
+
   const increaseZoom = () => {
     //ipcRenderer.send('increaseZoom');
   };
@@ -54,9 +58,17 @@ function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const changeAPI = () => {
+    if (amadeus)
+      setAmadeus(false);
+    else
+      setAmadeus(true);
+  }
+
   return (
-    <div>
-      <MuiThemeProvider theme={1 === 1 ? lightTheme : darkTheme}>
+    <main className={classes.travel} >
+      
+      <MuiThemeProvider theme={darkTheme}>
 
       <SnackbarProvider
         anchorOrigin={{
@@ -69,11 +81,13 @@ function App() {
     <div>
       <CssBaseline />
       <AppBar position="fixed" className={clsx(classes.appBar)}>
-        <Toolbar variant="dense">
-          <Typography variant="h6" noWrap className={classes.title}>
-            {"Sky Scanner Online"}
-          </Typography>
-        </Toolbar>
+        {/* <Toolbar variant="dense"> */}
+          {/* <Typography variant="h6" noWrap className={classes.title}> */}
+            {/* <image path="C:\Users\xxchrism\Documents\jstest\one\public\plane.jpg">
+              
+            </image> */}
+          {/* </Typography> */}
+        {/* </Toolbar> */}
       </AppBar>
     </div>
     <Drawer
@@ -92,8 +106,10 @@ function App() {
         <Toolbar variant="dense" />
       {/* <Divider /> */}
       <List disablePadding>
+        
+      <SwitchAPI changeAPI={changeAPI}/>
         {open ? 
-        <Dashboard />
+        <Dashboard children={amadeus}/>
         : ""}
         {/* <ListItem button>
           <ListItemIcon>
@@ -125,7 +141,7 @@ function App() {
         {open ? 
           <div>
             <Button
-              key={1}
+              key={0}
               variant="text"
               color="primary"
               style={{ width: 35, height: 47, display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
@@ -136,7 +152,7 @@ function App() {
             </Button>
             <Component2></Component2>
             <Button
-              key={0} 
+              key={1} 
               variant="text"
               color="primary"
               style={{ width: 35, height: 47, display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
@@ -147,7 +163,7 @@ function App() {
           </div> : 
           <div>
             <Button
-              key={1}
+              key={2}
               variant="text"
               color="primary"
               style={{ width: 35, height: 35, display: "list-item"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
@@ -158,7 +174,7 @@ function App() {
             </Button>
             <Component2></Component2>
             <Button
-              key={0} 
+              key={3} 
               variant="text"
               color="primary"
               style={{ width: 35, height: 35, display: "list-item"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
@@ -184,17 +200,29 @@ function App() {
         </ListItem>
       </List>
     </Drawer>
-    {/* <main className={classes.content}> */}
-      {/* <div className={classes.appBarSpacer} /> */}
-      <Container maxWidth="xl" className={classes.container}>
-        <Grid>
-          <Dashboard2 />
-        </Grid>
-      </Container>
-    {/* </main> */}
       </SnackbarProvider>
     </MuiThemeProvider>
-  </div>
+      <MuiThemeProvider theme={lightMode ? darkTheme : lightTheme}>
+
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        maxSnack={3}
+      >
+    <div> 
+       {/* className={classes.travel}> */}
+      <div className={clsx(classes.dataTable, {
+          [classes.dataTableOpen]: open,
+          [classes.dataTableClose]: !open,
+      })}>
+          { amadeus ? <Dashboard3 /> : <Dashboard2 /> }
+      </div>
+    </div>
+      </SnackbarProvider>
+    </MuiThemeProvider>
+  </main>
     // <React.Fragment>
     //   <DashboardView></DashboardView>
     // </React.Fragment>
