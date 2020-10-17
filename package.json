@@ -1,5 +1,6 @@
 {
   "name": "flightmode",
+  "homepage": "https://marcuschrist.github.io/FlightMode/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
