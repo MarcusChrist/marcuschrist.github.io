@@ -3,8 +3,6 @@ import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import { columnsAmadeus, Search, ConfirmedAmadeus, confirmedAmadeusInit } from '../../models/search';
 //import { useStyles } from "../../styles/appbar";
 import { CustomDialog } from '../shared/popupDialog';
-import { authAmadeus, confirmPriceAmadeus } from '../../api/getInfo';
-import { mapConfirmedData } from '../../reducers/mapping';
 import { LinearProgress, Dialog, DialogContent, Paper, Chip, Badge, Grid } from '@material-ui/core';
 
 //Card
@@ -13,7 +11,6 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
 import WorkIcon from '@material-ui/icons/Work';
-import { cursorTo } from 'readline';
 
 interface InterFaceProps {
     tableData?: any;
@@ -180,56 +177,56 @@ const Dashboard = (props: InterFaceProps) => {
             //tableBodyHeight: "500px",
 
             onRowClick: (rowData, rowMeta) => {
-                const auth = JSON.parse(localStorage.getItem("Auth") || "");
-                var key: string;
-                if ((new Date().getTime() / 1000) > auth["expires_in"]) {
-                    authAmadeus().
-                    then((response) => {
-                        if (!response.ok) { 
-                            console.log(response);
-                            throw new Error('Network response was not ok');
-                        };
-                        return response.json();
-                    }).then((data) => {
-                    data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
-                    localStorage.setItem("Auth", JSON.stringify(data));
-                    key = data["access_token"];
-                    //const body = mapAmadeus(searchParms);
-                    setTimeout(() => { 
-                        confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
-                            if (!response.ok) { 
-                                console.log(response);
-                                throw new Error('Network response was not ok');
-                            };
-                            return response.json();
-                        }).then((data) => {
-                            setConfirmedData(mapConfirmedData(data.data));
-                        })
-                        .catch((error) => {
-                            console.error('There has been a problem with your fetch operation:', error);
-                            //enqueueSnackbar(error + ".", { variant: "error" });
-                        });
-                    }, 1000);
-                    }).catch((error) => {
-                        console.error('There has been a problem with your fetch operation:', error);
-                        //enqueueSnackbar("Error", { variant: "error" });
-                    });
-                } else {
-                key = auth["access_token"];
-                    confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
-                        if (!response.ok) { 
-                            console.log(response);
-                            throw new Error('Network response was not ok');
-                        };
-                        return response.json();
-                        }).then((data) => {
-                            setConfirmedData(mapConfirmedData(data.data));
-                    })
-                    .catch((error) => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                    //enqueueSnackbar(error + ".", { variant: "error" });
-                    });
-                };
+                // const auth = JSON.parse(localStorage.getItem("Auth") || "");
+                // var key: string;
+                // if ((new Date().getTime() / 1000) > auth["expires_in"]) {
+                //     authAmadeus().
+                //     then((response) => {
+                //         if (!response.ok) { 
+                //             console.log(response);
+                //             throw new Error('Network response was not ok');
+                //         };
+                //         return response.json();
+                //     }).then((data) => {
+                //     data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
+                //     localStorage.setItem("Auth", JSON.stringify(data));
+                //     key = data["access_token"];
+                //     //const body = mapAmadeus(searchParms);
+                //     setTimeout(() => { 
+                //         confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
+                //             if (!response.ok) { 
+                //                 console.log(response);
+                //                 throw new Error('Network response was not ok');
+                //             };
+                //             return response.json();
+                //         }).then((data) => {
+                //             setConfirmedData(mapConfirmedData(data.data));
+                //         })
+                //         .catch((error) => {
+                //             console.error('There has been a problem with your fetch operation:', error);
+                //             //enqueueSnackbar(error + ".", { variant: "error" });
+                //         });
+                //     }, 1000);
+                //     }).catch((error) => {
+                //         console.error('There has been a problem with your fetch operation:', error);
+                //         //enqueueSnackbar("Error", { variant: "error" });
+                //     });
+                // } else {
+                // key = auth["access_token"];
+                //     confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
+                //         if (!response.ok) { 
+                //             console.log(response);
+                //             throw new Error('Network response was not ok');
+                //         };
+                //         return response.json();
+                //         }).then((data) => {
+                //             setConfirmedData(mapConfirmedData(data.data));
+                //     })
+                //     .catch((error) => {
+                //     console.error('There has been a problem with your fetch operation:', error);
+                //     //enqueueSnackbar(error + ".", { variant: "error" });
+                //     });
+                // };
                     setOpen(true);
                 },
             };

@@ -22,6 +22,7 @@ const [foundOrigin, setFoundOrigin] = useState(initAirport);
 const [foundDestination, setFoundDestination] = useState(initAirport);
 const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 const [myInfo, setMyInfo] = useState({IP: "", Code: "", Airport: ""});
+const [auth, setAuth] = useState({expires_in:0, access_token: ""})
 
 useEffect(() => {
   refresh();
@@ -80,8 +81,8 @@ const doAmadeus = (searchParms: Search) => {
   setSearchParms(searchParms);
   setProgress(1);
     
-  const auth = JSON.parse(localStorage.getItem("Auth") || "");
-  var key: string;
+  //const auth = JSON.parse(localStorage.getItem("Auth") || "");
+  //var key: string;
   if ((new Date().getTime() / 1000) > auth["expires_in"]) {
     authAmadeus().
       then((response) => {
@@ -91,12 +92,13 @@ const doAmadeus = (searchParms: Search) => {
         };
         return response.json();
     }).then((data) => {
-      data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
-      localStorage.setItem("Auth", JSON.stringify(data));
-      key = data["access_token"];
+      auth.expires_in = (new Date().getTime() / 1000) + data["expires_in"];
+      auth.access_token = data["access_token"];
+      //localStorage.setItem("Auth", JSON.stringify(data));
+      //key = data["access_token"];
       const body = mapAmadeus(searchParms);
       setTimeout(() => { 
-        flightAmadeus(key, body).then((response) => {
+        flightAmadeus(auth.access_token, body).then((response) => {
           if (!response.ok) { 
               console.log(response);
               throw new Error('Network response was not ok');
@@ -116,9 +118,9 @@ const doAmadeus = (searchParms: Search) => {
       enqueueSnackbar("Error", { variant: "error" });
     });
   } else {
-    key = auth["access_token"];
+    //key = auth["access_token"];
     const body = mapAmadeus(searchParms);
-    flightAmadeus(key, body).then((response) => {
+    flightAmadeus(auth.access_token, body).then((response) => {
       if (!response.ok) { 
           throw new Error('Network response was not ok');
       };
