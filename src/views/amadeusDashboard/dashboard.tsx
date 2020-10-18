@@ -183,39 +183,37 @@ const Dashboard = (props: InterFaceProps) => {
                 const auth = JSON.parse(localStorage.getItem("Auth") || "");
                 var key: string;
                 if ((new Date().getTime() / 1000) > auth["expires_in"]) {
-                    if (process.env["REACT_APP_API_URL"] && process.env["REACT_APP_API_KEY"] && process.env["REACT_APP_API_SECRET"]) {
-                        authAmadeus(process.env["REACT_APP_API_URL"], process.env["REACT_APP_API_KEY"], process.env["REACT_APP_API_SECRET"]).
-                        then((response) => {
+                    authAmadeus().
+                    then((response) => {
+                        if (!response.ok) { 
+                            console.log(response);
+                            throw new Error('Network response was not ok');
+                        };
+                        return response.json();
+                    }).then((data) => {
+                    data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
+                    localStorage.setItem("Auth", JSON.stringify(data));
+                    key = data["access_token"];
+                    //const body = mapAmadeus(searchParms);
+                    setTimeout(() => { 
+                        confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
                             if (!response.ok) { 
                                 console.log(response);
                                 throw new Error('Network response was not ok');
                             };
                             return response.json();
                         }).then((data) => {
-                        data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
-                        localStorage.setItem("Auth", JSON.stringify(data));
-                        key = data["access_token"];
-                        //const body = mapAmadeus(searchParms);
-                        setTimeout(() => { 
-                            confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {
-                                if (!response.ok) { 
-                                    console.log(response);
-                                    throw new Error('Network response was not ok');
-                                };
-                                return response.json();
-                            }).then((data) => {
-                                setConfirmedData(mapConfirmedData(data.data));
-                            })
-                            .catch((error) => {
-                                console.error('There has been a problem with your fetch operation:', error);
-                                //enqueueSnackbar(error + ".", { variant: "error" });
-                            });
-                        }, 1000);
-                        }).catch((error) => {
+                            setConfirmedData(mapConfirmedData(data.data));
+                        })
+                        .catch((error) => {
                             console.error('There has been a problem with your fetch operation:', error);
-                            //enqueueSnackbar("Error", { variant: "error" });
+                            //enqueueSnackbar(error + ".", { variant: "error" });
                         });
-                    };
+                    }, 1000);
+                    }).catch((error) => {
+                        console.error('There has been a problem with your fetch operation:', error);
+                        //enqueueSnackbar("Error", { variant: "error" });
+                    });
                 } else {
                 key = auth["access_token"];
                     confirmPriceAmadeus(key, amadeus.data[rowMeta.dataIndex]).then((response) => {

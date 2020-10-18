@@ -106,14 +106,14 @@ export const useStyles = makeStyles((theme: Theme) =>
             height: 30,
         },
         size: {
-            marginLeft: "18px",
-            marginRight: "18px",
+            marginLeft: "19%",
             display: "inline-flex",
-            fontSize: "15px"
+            fontSize: "15px",
         },
         sizeBot: {
             marginLeft: "2px",
-            fontSize: "12px"
+            fontSize: "12px",
+            marginBottom: "15px"
         },
         travel: {
             zIndex: -5 ,//theme.zIndex.drawer + 1,
@@ -215,5 +215,8 @@ export const useStyles = makeStyles((theme: Theme) =>
         dialog: {
             marginRight: "16px"
         },
+        buttonMinus: {
+            marginLeft: "-22px"
+        }
     }),
 );

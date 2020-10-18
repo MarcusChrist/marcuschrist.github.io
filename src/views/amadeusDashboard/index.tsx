@@ -3,9 +3,7 @@ import { connect } from "react-redux";
 import { compose } from "recompose";
 import { makeStyles } from "@material-ui/core/styles";
 import { DashboardView } from './dashboard';
-import { mapPrices, mapAmadeusPrices, mapConfirmedData } from '../../reducers/mapping';
-import { createSession, confirmPriceAmadeus, authAmadeus } from '../../api/getInfo';
-import { confirmedAmadeusInit, ConfirmedAmadeus } from '../../models/search';
+import { mapAmadeusPrices } from '../../reducers/mapping';
 
 const styles = makeStyles({
     root: {

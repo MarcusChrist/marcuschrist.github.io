@@ -5,8 +5,8 @@ export const getCountries = async () => {
     return await fetch(Web.urlCountries, {
         "method": "GET",
         "headers": {
-            "x-rapidapi-host": Web.host,
-            "x-rapidapi-key": Web.key
+            "x-rapidapi-host": process.env.REACT_APP_SKY_HOST || "",
+            "x-rapidapi-key": process.env.REACT_APP_SKY_KEY || ""
         }
     });
 };
@@ -23,8 +23,8 @@ export const getAirport = async (value: any) => {
     return await fetch(apiCall , {
         "method": "GET",
         "headers": {
-            "x-rapidapi-host": Web.host,
-            "x-rapidapi-key": Web.key
+            "x-rapidapi-host": process.env.REACT_APP_SKY_HOST || "",
+            "x-rapidapi-key": process.env.REACT_APP_SKY_KEY || ""
         }
     });
 };
@@ -110,8 +110,8 @@ export const getSky = async (searchParms: Search) => {
         {
             "method": "GET",
             "headers": {
-                "x-rapidapi-host": Web.host,
-                "x-rapidapi-key": Web.key
+                "x-rapidapi-host": process.env.REACT_APP_SKY_HOST || "",
+                "x-rapidapi-key": process.env.REACT_APP_SKY_KEY || ""
         }
     });
 };
@@ -121,7 +121,7 @@ export const createSession = async ()  => {
         {
             body: "cabinclass=Economy\n    &country=UK\n    ¤cy=GBP\n    &locale=en-GB\n    &locationSchema=iata\n" +    
                 "&originplace=EDI\n    &destinationplace=LHR\n    &outbounddate=2017-05-30\n    &inbounddate=2017-06-02\n" +    
-                    "&adults=1\n    &children=0\n    &infants=0\n    &apikey=ad4fb50449msh97e9445ce08d04dp1fe08djsn3d1fec896dd0",
+                    "&adults=1\n    &children=0\n    &infants=0\n    &apikey=" + process.env.REACT_APP_SKY_KEY,
             "method": "POST",
             "headers": {
             "X-Forwarded-For": "193.15.240.60",
@@ -130,10 +130,9 @@ export const createSession = async ()  => {
       });
 }
 
-export const authAmadeus = async (url: string, key: string, secret: string) => { 
-
-    return await fetch(url, {
-        body: "grant_type=client_credentials&client_id=" + key + "&client_secret=" + secret,
+export const authAmadeus = async () => { 
+    return await fetch(process.env.REACT_APP_API_URL || "", {
+        body: "grant_type=client_credentials&client_id=" + process.env.REACT_APP_API_KEY + "&client_secret=" + process.env.REACT_APP_API_SECRET,
         headers: {
         "Content-Type": "application/x-www-form-urlencoded"
         },

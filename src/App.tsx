@@ -13,6 +13,8 @@ import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Dashboard2 from "./views/dashboard";
 import Dashboard3 from "./views/amadeusDashboard";
 import SwitchAPI from './views/shared/switchAPI';
+import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
 function App() {
   const classes = useStyles();
@@ -139,48 +141,42 @@ function App() {
         </ListItem>
         <Divider />
         {open ? 
-          <div>
-            <Button
-              key={0}
-              variant="text"
-              color="primary"
-              style={{ width: 35, height: 47, display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
-              onClick={decreaseZoom}
-              title={"Decrease"}
-              >
-              -
-            </Button>
-            <Component2></Component2>
-            <Button
-              key={1} 
-              variant="text"
-              color="primary"
-              style={{ width: 35, height: 47, display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
-              onClick={increaseZoom}
-              title={"Increase"}>
-              +
-            </Button>
-          </div> : 
+        <div>
+          <Button
+            key={0}
+            variant="text"
+            style={{ width: 35, height: 47, display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
+            onClick={decreaseZoom}
+            title={"Decrease"}
+            endIcon={<IndeterminateCheckBoxIcon className={classes.buttonMinus} /> } >
+          </Button>
+          <Component2/>
+          <Button
+            key={1} 
+            variant="text"
+            style={{ width: 35, height: 47, display: "inline-flex", float: "right",}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
+            onClick={increaseZoom}
+            title={"Increase"}
+            endIcon={<AddBoxIcon />}>
+          </Button>
+        </div> : 
           <div>
             <Button
               key={2}
               variant="text"
-              color="primary"
-              style={{ width: 35, height: 35, display: "list-item"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
+              style={{ width: 35, height: 35, marginBottom: "10px", display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
               //onClick={decreaseZoom}
               title={"Decrease"}
-              >
-              -
+              endIcon={<IndeterminateCheckBoxIcon className={classes.buttonMinus} />}>
             </Button>
             <Component2></Component2>
             <Button
               key={3} 
               variant="text"
-              color="primary"
-              style={{ width: 35, height: 35, display: "list-item"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
+              style={{ width: 35, height: 35, marginBottom: "10px", display: "inline-flex"}}//, marginRight: "1px", marginLeft: "1px",marginTop: "1px" }}
               //onClick={increaseZoom}
-              title={"Increase"}>
-              +
+              title={"Increase"}
+              endIcon={<AddBoxIcon className={classes.buttonMinus} />}>
             </Button>
           </div>
         }

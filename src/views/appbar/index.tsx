@@ -83,40 +83,38 @@ const doAmadeus = (searchParms: Search) => {
   const auth = JSON.parse(localStorage.getItem("Auth") || "");
   var key: string;
   if ((new Date().getTime() / 1000) > auth["expires_in"]) {
-    if (process.env["REACT_APP_API_URL"] && process.env["REACT_APP_API_KEY"] && process.env["REACT_APP_API_SECRET"]) {
-      authAmadeus(process.env["REACT_APP_API_URL"], process.env["REACT_APP_API_KEY"], process.env["REACT_APP_API_SECRET"]).
-        then((response) => {
+    authAmadeus().
+      then((response) => {
+        if (!response.ok) { 
+            console.log(response);
+            throw new Error('Network response was not ok');
+        };
+        return response.json();
+    }).then((data) => {
+      data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
+      localStorage.setItem("Auth", JSON.stringify(data));
+      key = data["access_token"];
+      const body = mapAmadeus(searchParms);
+      setTimeout(() => { 
+        flightAmadeus(key, body).then((response) => {
           if (!response.ok) { 
               console.log(response);
               throw new Error('Network response was not ok');
           };
-          return response.json();
-      }).then((data) => {
-        data["expires_in"] = (new Date().getTime() / 1000) + data["expires_in"];
-        localStorage.setItem("Auth", JSON.stringify(data));
-        key = data["access_token"];
-        const body = mapAmadeus(searchParms);
-        setTimeout(() => { 
-          flightAmadeus(key, body).then((response) => {
-            if (!response.ok) { 
-                console.log(response);
-                throw new Error('Network response was not ok');
-            };
-          }).then((data) => {
-            setAmadeus(data);
-            setProgress(100);
-          }).catch((error) => {
-              setProgress(-1);
-              console.error('There has been a problem with your fetch operation:', error);
-              enqueueSnackbar("Error", { variant: "error" });
-          }); 
-        }, 1000);
-      }).catch((error) => {
-        setProgress(-1);
-        console.error('There has been a problem with your fetch operation:', error);
-        enqueueSnackbar("Error", { variant: "error" });
-      });
-    };
+        }).then((data) => {
+          setAmadeus(data);
+          setProgress(100);
+        }).catch((error) => {
+            setProgress(-1);
+            console.error('There has been a problem with your fetch operation:', error);
+            enqueueSnackbar("Error", { variant: "error" });
+        }); 
+      }, 1000);
+    }).catch((error) => {
+      setProgress(-1);
+      console.error('There has been a problem with your fetch operation:', error);
+      enqueueSnackbar("Error", { variant: "error" });
+    });
   } else {
     key = auth["access_token"];
     const body = mapAmadeus(searchParms);

@@ -163,8 +163,6 @@ export enum Web {
     urlDates = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsedates/v1.0",
     urlRoutes = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browseroutes/v1.0",
     urlQuotes = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0",
-    host = "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
-    key = "ad4fb50449msh97e9445ce08d04dp1fe08djsn3d1fec896dd0",
     urlSession = "https://partners.api.skyscanner.net/apiservices/pricing/v1.0",
 };
 export const initAirport = [
