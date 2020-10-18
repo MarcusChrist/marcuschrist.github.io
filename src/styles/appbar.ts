@@ -147,7 +147,7 @@ export const useStyles = makeStyles((theme: Theme) =>
             //padding: theme.spacing(1),
         },
         whiteFont: {
-            marginTop: theme.spacing(2),
+            //marginTop: theme.spacing(2),
         },
         test: {
           backgroundColor: "rgba(0, 0, 0, 0.20)",
