@@ -104,6 +104,11 @@ const doAmadeus = (searchParms: Search) => {
               throw new Error('Network response was not ok');
           };
         }).then((data) => {
+          console.log(data);
+          if (data === undefined) {
+            doAmadeus(searchParms);
+            return;
+          }
           setAmadeus(data);
           setProgress(100);
         }).catch((error) => {

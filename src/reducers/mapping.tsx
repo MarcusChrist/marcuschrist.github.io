@@ -182,11 +182,15 @@ export function mapAmadeusPrices(prices: any) {
     
     Object.keys(prices.data).map((index: string) => {
         
-        //Only direct flights
-        if (prices.data[index].itineraries[0].segments[1] || prices.data[index].itineraries[1].segments[1])
-            return;
-
         var message: { [key: string]: any } = {};
+
+        //Only direct flights
+        if (prices.data[index].itineraries[0].segments[1] || prices.data[index].itineraries[1].segments[1]) {
+            message.empty = true;
+            fix.push(message);
+            return;
+        }
+
         //itineraries outbound
         message.outboundDuration  = prices.data[index].itineraries[0].duration.replace("PT", "").replace("H", "h ").replace("M", "m");
         message.outboundArrival   = new Date(prices.data[index].itineraries[0].segments[0].arrival.at).toString();

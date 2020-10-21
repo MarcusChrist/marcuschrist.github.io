@@ -95,5 +95,20 @@ export const useStyles = makeStyles((theme: Theme) =>
             textAlign: "center"
 
         },
+        rawXmlText: {
+            //alignContent: "flex-start",
+            //marginTop: "10px", 
+            //justifyContent:"center",
+            //width: "100%",
+            //backgroundColor:"green",
+        },
+        textArea: {
+            width: "100%",
+            resize: "none",
+            marginTop: "10px", 
+            //alignContent: "flex-start",
+            //backgroundColor: "red",
+            //flex: "inline-flex",
+        }
     }),
 );

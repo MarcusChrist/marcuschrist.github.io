@@ -3,7 +3,7 @@ import MUIDataTable, { MUIDataTableOptions } from "mui-datatables";
 import { columnsAmadeus, Search, ConfirmedAmadeus, confirmedAmadeusInit } from '../../models/search';
 //import { useStyles } from "../../styles/appbar";
 import { CustomDialog } from '../shared/popupDialog';
-import { LinearProgress, Dialog, DialogContent, Paper, Chip, Badge, Grid } from '@material-ui/core';
+import { LinearProgress, Dialog, DialogContent, Paper, Chip, Badge, Grid, TextareaAutosize, Button, Box, AppBar, Tabs, Tab } from '@material-ui/core';
 
 //Card
 import { useStyles } from '../../styles/card';
@@ -11,6 +11,10 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import FlightTakeoffIcon from '@material-ui/icons/FlightTakeoff';
 import FlightLandIcon from '@material-ui/icons/FlightLand';
 import WorkIcon from '@material-ui/icons/Work';
+import { formatFlight } from '../shared/formatter';
+import { TabPanel } from '../shared/TabsHelper';
+import classes from '*.module.css';
+import { AmadeusDialog } from './amadeusDialog';
 
 interface InterFaceProps {
     tableData?: any;
@@ -31,24 +35,35 @@ const Dashboard = (props: InterFaceProps) => {
     // States
     const [isOpen, setOpen] = useState(false);
     const [confirmedData, setConfirmedData] = useState<ConfirmedAmadeus>(confirmedAmadeusInit);
+    const [openedIndex, setOpenedIndex] = useState(0);
     const classes = useStyles();
 
     const handleClose = () => {
         setOpen(false)
     };
-    const clickDialog = () => {
-        console.log("hej");
-    }
+    const clickDialog = (index: number) => (event: any) => {
+        setOpenedIndex(index);
+        setOpen(true);
+    };
+
     const changeCursor = () => {
         document.body.style.cursor = "pointer";
     };
+
     const normalCursor = () => {
         document.body.style.cursor = "default";
     };
+
+
     const columns: any = {};
 
     if (1 === 1) {
+        // console.log(amadeus.data[openedIndex]);
         return ( 
+            <>
+            {amadeus.data ? <AmadeusDialog open={isOpen} handleClose={handleClose} amadeus={amadeus.data[openedIndex]} 
+                tableData={tableData[openedIndex]}/>
+            : ""}
             <div className={classes.dialog}>
                 {/* {progress === 100 ?  */}
                 {/* <Paper className={classes.flightsFound}>
@@ -58,17 +73,20 @@ const Dashboard = (props: InterFaceProps) => {
                 </Paper>  */}
                 {/* : ""} */}
             {progress === 100 || progress === 0 ? Object.keys(tableData).map((value: string, index: number) => {
-                var toDeparture = tableData[index].outboundDeparture.substring(17,21) + " " + 
+                if (tableData[index].empty) {
+                    return;
+                }
+                var toDeparture = tableData[index].outboundDeparture.substring(16,21) + " " + 
                     searchParms.originAirport.PlaceName + " " + tableData[index].outboundDepartureAirport;
-                var toArrival = tableData[index].outboundArrival.substring(17,21) + " " + 
+                var toArrival = tableData[index].outboundArrival.substring(16,21) + " " + 
                     searchParms.destinationAirport.PlaceName + " " + tableData[index].outboundArrivalAirport;
-                var fromDeparture = tableData[index].returnDeparture.substring(17,21) + " " + 
+                var fromDeparture = tableData[index].returnDeparture.substring(16,21) + " " + 
                     searchParms.destinationAirport.PlaceName + " " + tableData[index].returnDepartureAirport;
-                var fromArrival = tableData[index].returnArrival.substring(17,21) + " " + 
+                var fromArrival = tableData[index].returnArrival.substring(16,21) + " " + 
                     searchParms.originAirport.PlaceName + " " + tableData[index].returnArrivalAirport;
                 return (
                 <DialogContent key={index}>
-                    <Paper className={classes.card} onClick={clickDialog} onMouseOver={changeCursor} onMouseLeave={normalCursor} >
+                    <Paper className={classes.card} onClick={clickDialog(index)} onMouseOver={changeCursor} onMouseLeave={normalCursor} >
                     <Grid className={classes.paperLeft}>
                         <div>
                             {tableData[index].outboundDeparture.substring(0,11)}
@@ -161,6 +179,7 @@ const Dashboard = (props: InterFaceProps) => {
                 <LinearProgress variant={progress === -1 || progress === 100 ?  "determinate" : "indeterminate"} value={progress} color={progress !== -1 ? "primary" : "secondary"} />
             </div> }
         </div>
+        </>
         );
     } else {
         const options: MUIDataTableOptions = {
@@ -244,7 +263,7 @@ const Dashboard = (props: InterFaceProps) => {
             <LinearProgress variant={progress === -1 || progress === 100 ?  "determinate" : "indeterminate"} value={progress} color={progress !== -1 ? "primary" : "secondary"} />
                 <LinearProgress variant={progress === -1 || progress === 100 ?  "determinate" : "indeterminate"} value={progress} color={progress !== -1 ? "primary" : "secondary"} />
                 <MUIDataTable
-                    title={tableData.length + " Flights found from Amadeus."}
+                    title={tableData.length + " Flights found from Amadeuds."}
                     data={tableData ? tableData : ""}
                     columns={columnsAmadeus ? columnsAmadeus : columns}
                     options={options}

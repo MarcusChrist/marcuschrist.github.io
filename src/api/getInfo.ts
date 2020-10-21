@@ -73,7 +73,7 @@ export const getSky = async (searchParms: Search) => {
             outboundDate = hej1.toISOString().substring(0,10);
         } 
     }
-    console.log(searchParms.returnDate);
+
     if (searchParms.returnDate) {
         if (searchParms.returnDate.toString().substr(10,1) === "T") {
             returnDate = searchParms.returnDate.toString().substring(0,10);
@@ -85,7 +85,6 @@ export const getSky = async (searchParms: Search) => {
             returnDate = "0001-01-01";
         }
         else {
-            console.log(searchParms.returnDate);
             var hej2 = searchParms.returnDate;
             hej2.setUTCHours(24);
             //if (searchParms.returnDate.toTimeString().substring(0,2) === "00")
@@ -93,7 +92,6 @@ export const getSky = async (searchParms: Search) => {
             returnDate = hej2.toISOString().substring(0,10);
         } 
     }
-    console.log(searchParms.returnDate);
     var apiCall = Web.urlRoutes + 
                     "/" + searchParms.country.Code + 
                     "/" + searchParms.currency + 
@@ -131,6 +129,7 @@ export const createSession = async ()  => {
 }
 
 export const authAmadeus = async () => { 
+    console.log("getting new access...");
     return await fetch(process.env.REACT_APP_API_URL || "", {
         body: "grant_type=client_credentials&client_id=" + process.env.REACT_APP_API_KEY + "&client_secret=" + process.env.REACT_APP_API_SECRET,
         headers: {
@@ -142,7 +141,6 @@ export const authAmadeus = async () => {
 export const confirmPriceAmadeus = async (auth: string, body: any) => {
 
     const url = "https://test.api.amadeus.com/v1/shopping/flight-offers/pricing";
-    console.log(body);
     const fixedBody = {
         "data": {
             "type": "flight-offers-pricing",
